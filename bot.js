@@ -1,38 +1,67 @@
-var Botkit = require("botkit");
+const Botkit = require("botkit");
 const config = require("./env.json");
+const nano = require("nano");
+const logger = require("winston");
 
-var controller = Botkit.facebookbot(config.messenger);
+const controller = Botkit.facebookbot(config.messenger);
+const bot = controller.spawn({});
 
-var bot = controller.spawn({});
+const customerDb = nano(config.customerDatabase);
 
-// if you are already using Express, you can use your own server instance...
-// see "Use BotKit with an Express web server"
-controller.setupWebserver(process.env.port || 3000, function(err, webserver) {
-  controller.createWebhookEndpoints(controller.webserver, bot, function() {
-    console.log("This bot is online!!!");
+controller.setupWebserver(process.env.port || 3000, (err, webserver) => {
+  controller.createWebhookEndpoints(controller.webserver, bot, () => {
+    logger.info("This bot is online!!!");
   });
 });
 
 // this is triggered when a user clicks the send-to-messenger plugin
-controller.on("facebook_optin", function(bot, message) {
+controller.on("facebook_optin", (bot, message) => {
   bot.reply(message, "Welcome to my app!");
 });
 
 // user said hello
-controller.hears(["hello"], "message_received", function(bot, message) {
+controller.hears(["hello"], "message_received", (bot, message) => {
   bot.reply(message, "Hey there.");
 });
 
-controller.hears(["cookies"], "message_received", function(bot, message) {
-  console.log("Received message - " + message);
-  bot.startConversation(message, function(err, convo) {
-    convo.say("Did someone say cookies!?!!");
-    convo.ask("What is your favorite type of cookie?", function(
-      response,
-      convo
-    ) {
-      convo.say("Golly, I love " + response.text + " too!!!");
+controller.hears(["help"], "message_received", (bot, message) => {
+  bot.startConversation(message, (err, convo) => {
+    convo.say(
+      "Hello! Before I can assist you I need to gather some information first"
+    );
+    convo.ask("What is your Speedernet user id?", (response, convo) => {
+      getUser(response.text)
+        .then(user => {
+          convo.say(
+            "Hello, " + user.display_name + "! How can I assist you today?"
+          );
+        })
+        .catch(err => {
+          convo.say("Hmm, I'm sorry but I couldn't find your customer record");
+        });
       convo.next();
     });
   });
 });
+
+/**
+ * Fetches a user record from database by user id
+ */
+function getUser(id) {
+  return new Promise((resolve, reject) => {
+    customerDb.get(id, (err, user) => {
+      if (!err) {
+        resolve(user);
+      } else {
+        reject(err);
+      }
+    });
+  });
+}
+
+/**
+ * Logger helper
+ */
+function toString(data) {
+  return JSON.stringify(data, null, 2);
+}
