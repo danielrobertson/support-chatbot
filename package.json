@@ -1,0 +1,22 @@
+{
+  "name": "support-chatbot",
+  "version": "1.0.0",
+  "description": "A Facebook Messenger chatbot for internet provider customer support ",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielrobertson/support-chatbot.git"
+  },
+  "author": "danielrobertson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielrobertson/support-chatbot/issues"
+  },
+  "homepage": "https://github.com/danielrobertson/support-chatbot#readme",
+  "dependencies": {
+    "botkit": "^0.6.14"
+  }
+}
