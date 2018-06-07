@@ -2,7 +2,7 @@
 
 A Facebook Messenger chatbot built with IBM Watson for a generic internet provider that can answer questions, schedule appointments, and file reports to improve customer experience and allow customer service representatives to focus on more important issues.
 
-Build using IBM Watson for natural language processing, Node.js and Botkit for the server requests, Facebook Messenger SDK, IBM Cloudant for data storage, and hosted on the IBM Cloud (formerly Bluemix).
+Built using IBM Watson for natural language processing, Node.js and Botkit for the server requests, Facebook Messenger SDK, IBM Cloudant for data storage, and hosted on the IBM Cloud (formerly Bluemix).
 
 ## Usage
 
