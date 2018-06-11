@@ -1,12 +1,15 @@
 const Botkit = require("botkit");
-const config = require("./env.json");
 const nano = require("nano");
 const logger = require("winston");
+require("dotenv").config();
 
-const controller = Botkit.facebookbot(config.messenger);
+const controller = Botkit.facebookbot({
+  verify_token: process.env.MESSENGER_VERIFY_TOKEN,
+  access_token: process.env.MESSENGER_ACCESS_TOKEN
+});
 const bot = controller.spawn({});
 
-const customerDb = nano(config.customerDatabase);
+const customerDb = nano(process.env.CUSTOMER_DATABASE);
 
 controller.setupWebserver(process.env.port || 3000, (err, webserver) => {
   controller.createWebhookEndpoints(controller.webserver, bot, () => {
